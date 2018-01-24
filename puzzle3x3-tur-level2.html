@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>puzzle</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            background-color: floralwhite;
+        }
+
+        .explanation {
+            font-size: 30px;
+            padding-top: 120px;
+            padding-bottom: 100px;
+        }
+
+        #puzzle {
+            max-width: 100%;
+            max-height: 100%;
+            position: relative;
+        }
+
+        .tile {
+            width: 230px;
+            height: 230px;
+            border: 2px solid gray;
+            border-radius: 40px;
+            color: white ;
+            font-size: 40px;
+            font-weight: bold;
+            background-color: white;
+        }
+
+        #correct {
+            position: absolute;
+            width: 100%;
+            top: 2.5em;
+            background-color: deeppink;
+            color: white;
+            font-size: 80px;
+            opacity: 0.9;
+        }
+
+        #buttons {
+            display: flex;
+        }
+
+        #onceMore {
+            background-color: darkgray;
+            margin: auto;
+            color: white;
+            font-size: 60px;
+            opacity: 0.9;
+        }
+
+        #next {
+            background-color: darkgray;
+            margin: auto;
+            color: white;
+            font-size: 60px;
+            opacity: 0.9;
+        }
+        #back {
+            background-color: darkgray;
+            margin: auto;
+            color: white;
+            font-size: 60px;
+            opacity: 0.9;
+        }
+
+        .none {
+            display: none;
+        }
+
+        .display {
+            display: block;
+        }
+
+    </style>
+    <script>
+        var tiles = [];
+        "use strict";
+        var numbers = ['sıfır','bir','iki','üç','dört','beş','altı','yedi','sekiz'];
+        var weeks = ["", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar", "hafta"];
+        var bgColor = ["white", "red", "orange", "blue", "green", "gold", "gray", "purple", "pink"];
+        
+        var init_flag = false;
+        var state = false;
+        
+        function init() {
+            var table = document.getElementById("table");
+            for (var i = 0; i < 3; i++) {
+                var tr = document.createElement("tr");
+                for (var j = 0; j < 3; j++) {
+                    var td = document.createElement("td");
+                    var index = i * 3 + j;
+                    td.className = "tile";
+                    td.index = index;
+                    td.value = index;
+                    td.textContent = index == 0 ? "" : numbers[index];
+                    td.onclick = click;
+                    tr.appendChild(td);
+                    tiles.push(td);
+                }
+                table.appendChild(tr);
+            }
+            for (var i = 0; i < 1000; i++) {
+                click({
+                    srcElement: {
+                        index: Math.floor(Math.random() * 9)
+                    }
+                });
+            }
+            init_flag = true;
+        }
+            function swap(i, j) {
+                var tmp = tiles[i].value;
+                var tmp_text = tiles[i].textContent;
+                tiles[i].value = tiles[j].value;
+                tiles[i].textContent = tiles[j].textContent;
+                tiles[j].value = tmp;
+                tiles[j].textContent = tmp_text;
+                tiles[i].style.backgroundColor = bgColor[tiles[i].value]
+                tiles[j].style.backgroundColor = bgColor[tiles[j].value]
+            }
+
+        function onceMore() {
+            init_flag == false;
+            for (var i = 0; i < 1000; i++) {
+                click({
+                    srcElement: {
+                        index: Math.floor(Math.random() * 9)
+                    }
+                });
+            }
+            init_flag = true;
+            document.getElementById("correct").classList.remove("display");
+            document.getElementById("correct").classList.add("none");
+            document.getElementById("onceMore").classList.remove("display");
+            document.getElementById("onceMore").classList.add("none");
+            document.getElementById("next").classList.remove("display");
+            document.getElementById("next").classList.add("none");
+            document.getElementById("back").classList.remove("display");
+            document.getElementById("back").classList.add("none");
+        }
+
+        function next() {
+            tiles.splice(0, tiles.length);
+            init_flag = false;
+            state = true;
+            var table = document.getElementById("table");
+            for (var r = 0; r < 3; r++) {
+                table.deleteRow(-1);
+            }
+            for (var i = 0; i < 3; i++) {
+                var tr = document.createElement("tr");
+                for (var j = 0; j < 3; j++) {
+                    var td = document.createElement("td");
+                    var index = i * 3 + j;
+                    td.className = "tile";
+                    td.index = index;
+                    td.value = index;
+                    td.textContent = index == 0 ? "" : weeks[index];
+                    td.onclick = click;
+                    tr.appendChild(td);
+                    tiles.push(td);
+                }
+                table.appendChild(tr);
+            }
+            for (var i = 0; i < 1000; i++) {
+                click({
+                    srcElement: {
+                        index: Math.floor(Math.random() * 9)
+                    }
+                });
+            }
+            init_flag = true;
+            document.getElementById("correct").classList.remove("display");
+            document.getElementById("correct").classList.add("none");
+            document.getElementById("onceMore").classList.remove("display");
+            document.getElementById("onceMore").classList.add("none");
+            document.getElementById("next").classList.remove("display");
+            document.getElementById("next").classList.add("none");
+            document.getElementById("level1").classList.remove("display");
+            document.getElementById("level1").classList.add("none");
+            document.getElementById("level2").classList.remove("none");
+            document.getElementById("level2").classList.add("display");
+            var tdColor = document.getElementsByTagName("td");
+            for (var k = 0; k < 10; k++) {
+                tdColor[k].style.backgroundColor = bgColor[tdColor[k].value];
+            }
+        }
+        
+        function back() {
+            tiles.splice(0, tiles.length);
+            init_flag = false;
+            state = false;
+            var table = document.getElementById("table");
+            for (var r = 0; r < 3; r++) {
+                table.deleteRow(-1);
+            }
+            document.getElementById("correct").classList.remove("display");
+            document.getElementById("correct").classList.add("none");
+            document.getElementById("onceMore").classList.remove("display");
+            document.getElementById("onceMore").classList.add("none");
+            document.getElementById("back").classList.remove("display");
+            document.getElementById("back").classList.add("none");
+            document.getElementById("level1").classList.remove("none");
+            document.getElementById("level1").classList.add("display");
+            document.getElementById("level2").classList.remove("display");
+            document.getElementById("level2").classList.add("none");
+            init();
+        }
+
+        function click(e) {
+            var isAllCardCompleted = false;
+            var i = e.srcElement.index;
+            if (i - 3 >= 0 && tiles[i - 3].value == 0) {
+                swap(i, i - 3);
+            } else if (i + 3 < 9 && tiles[i + 3].value == 0) {
+                swap(i, i + 3);
+            } else if (i % 3 != 0 && tiles[i - 1].value == 0) {
+                swap(i, i - 1);
+            } else if (i % 3 != 2 && tiles[i + 1].value == 0) {
+                swap(i, i + 1);
+            }
+
+            if (tiles[0].value == 0 && init_flag == true) {
+                //全てのパネルの表示があっているかどうか
+                for (var j = 1; j < (3 * 3); j++) {
+                    if (tiles[j].index != tiles[j].value) {
+                        break;
+                    }
+                    if (j == (3 * 3 - 1)) isAllCardCompleted = true;
+                }
+                //全てのパネルの表示があっていたら、画像を表示
+                if (isAllCardCompleted == true) {
+                    //共通
+                    document.getElementById("correct").classList.remove("none");
+                    document.getElementById("correct").classList.add("display");
+                    //1回目だったら
+                    if(state == false){
+                    document.getElementById("onceMore").classList.remove("none");
+                    document.getElementById("onceMore").classList.add("display");
+                    document.getElementById("next").classList.remove("none");
+                    document.getElementById("next").classList.add("display");
+                    }
+                    else{
+                    document.getElementById("onceMore").classList.remove("none");
+                    document.getElementById("onceMore").classList.add("display");
+                    document.getElementById("back").classList.remove("none");
+                    document.getElementById("back").classList.add("display");
+                    }
+                    
+                }
+            }
+        }
+
+    </script>
+</head>
+
+<body onload="init()">
+    <p class="explanation display" id="level1">左上は空欄にして、1-8の数字が順番通りに並ぶように、空欄をタッチして数字を並べ替えよう！</p>
+    <p class="explanation none" id="level2">左上は空欄にして、「月・火・水・木・金・土・日・週」と並ぶように、空欄をタッチして並べ替えよう！</p>
+    <div id="puzzle">
+        <table id="table" align="center"></table>
+        <p id="correct" class="none">Müthiş!</p>
+        <div id="buttons">
+            <button id="onceMore" class="none" onclick="onceMore()">tekrar</button>
+            <button id="next" class="none" onclick="next()">ileri</button>
+            <button id="back" class="none" onclick="back()">geri</button>
+        </div>
+    </div>
+</body>
+
+</html>
